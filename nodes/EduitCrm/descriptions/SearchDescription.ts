@@ -60,6 +60,22 @@ export const searchFields: INodeProperties[] = [
 		options: [
 			{ displayName: 'Max Contacts', name: 'perPage', type: 'number', typeOptions: { minValue: 1 }, default: 20, description: 'Máximo de contatos retornados' },
 			{ displayName: 'Include Deals', name: 'includeDeals', type: 'boolean', default: true, description: 'Whether to also fetch the deals linked to each contact' },
+			{
+				displayName: 'Include Tracked Info',
+				name: 'includeTracking',
+				type: 'boolean',
+				default: true,
+				description:
+					'Whether to also return the tracked info of each contact (utm_source/medium/campaign/content/term, utm_id, referrer, gclid, fbclid, google_client_id, ttad_id/ttad_name)',
+			},
+			{
+				displayName: 'Only Tracked Info',
+				name: 'onlyTracking',
+				type: 'boolean',
+				default: false,
+				description:
+					'Whether to return only the tracked info of each contact (id, nome e o grupo "tracking"). Ignora "Include Deals" — útil para alimentar planilhas/relatórios de origem',
+			},
 		],
 	},
 ];

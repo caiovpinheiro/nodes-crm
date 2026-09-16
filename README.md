@@ -28,7 +28,7 @@ Node privado do n8n para operar o **Bwipo CRM** com campos amigáveis (sem monta
 - **Note**
   - `Create on Deal` — `POST /api/deals/:id/notes`. Cria uma nota vinculada ao negócio; a mesma nota aparece **tanto na aba "Notas" do deal em `/pipeline` quanto na timeline do `/inbox`** (como nota interna) se o contato do deal tiver conversa vigente. Requer o ajuste do backend que fez esta rota aceitar Bearer token e espelhar a nota como `Message` privada.
 - **Search**
-  - `Search Full Record` — busca contatos e os negócios de cada um; retorna todos os resultados + `mainContact`/`mainDeal`. Aceita `Search By`: General Term, Email, Phone ou **Ad Source ID (Meta CTWA)**.
+  - `Search Full Record` — busca contatos e os negócios de cada um; retorna todos os resultados + `mainContact`/`mainDeal`. Aceita `Search By`: General Term, Email, Phone ou **Ad Source ID (Meta CTWA)**. Opções: `Include Tracked Info` (padrão ligado — UTM/gclid/fbclid/referrer no contato) e `Only Tracked Info` (retorna só id/nome + grupo `tracking`, sem buscar negócios). Requer backend com `includeTracking=1` em `GET /api/contacts`.
 
 ## Credencial: `Bwipo CRM API`
 

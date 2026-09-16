@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-eduit-crm",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "Node privado do n8n para operar o Bwipo CRM (contatos, deals, timeline, deal+contato, busca e trigger por eventos) via API com campos amigáveis.",
   "keywords": [
     "n8n-community-node-package",

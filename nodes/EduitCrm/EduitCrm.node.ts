@@ -1011,6 +1011,31 @@ async function handleTimeline(
 	return { ...withFlags[0], totalMatched: matched.length };
 }
 
+/** Campos de atribuição/UTM do contato — mesmos de CONTACT_TRACKING_KEYS no backend. */
+const TRACKING_FIELD_KEYS = [
+	'adUtmSource',
+	'adUtmMedium',
+	'adUtmCampaign',
+	'adUtmContent',
+	'adUtmTerm',
+	'utmId',
+	'utmReferrer',
+	'referrer',
+	'gclid',
+	'fbclid',
+	'googleClientId',
+	'ttadId',
+	'ttadName',
+] as const;
+
+function pickTrackingFields(contact: IDataObject): IDataObject {
+	const tracking: IDataObject = {};
+	for (const key of TRACKING_FIELD_KEYS) {
+		tracking[key] = contact[key] ?? null;
+	}
+	return tracking;
+}
+
 async function handleSearch(
 	this: IExecuteFunctions,
 	operation: string,
@@ -1028,9 +1053,12 @@ async function handleSearch(
 	}
 
 	const perPage = (options.perPage as number) ?? 20;
-	const includeDeals = options.includeDeals !== false;
+	const onlyTracking = options.onlyTracking === true;
+	const includeTracking = onlyTracking || options.includeTracking !== false;
+	const includeDeals = !onlyTracking && options.includeDeals !== false;
 
 	const qs: IDataObject = { perPage };
+	if (includeTracking) qs.includeTracking = '1';
 	if (searchBy === 'email') qs.email = value;
 	else if (searchBy === 'phone') qs.phone = value;
 	else if (searchBy === 'adSourceId') qs.adSourceId = value;
@@ -1043,7 +1071,16 @@ async function handleSearch(
 		{},
 		qs,
 	)) as IDataObject;
-	const contacts = ((contactsRes.items as IDataObject[]) ?? []) as IDataObject[];
+	let contacts = ((contactsRes.items as IDataObject[]) ?? []) as IDataObject[];
+
+	if (onlyTracking) {
+		contacts = contacts.map((c) => ({
+			id: c.id,
+			number: c.number,
+			name: c.name,
+			tracking: pickTrackingFields(c),
+		}));
+	}
 
 	const results: IDataObject[] = [];
 	const allDeals: IDataObject[] = [];

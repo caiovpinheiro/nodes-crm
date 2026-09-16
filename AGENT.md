@@ -4,6 +4,26 @@ Este arquivo registra decisões estruturais tomadas ao longo do desenvolvimento 
 
 ---
 
+### 2026-09-16 - Search Full Record com informações rastreadas
+
+**Decisão**
+
+`Search > Search Full Record` ganhou duas opções: `Include Tracked Info` (padrão **ligado**) envia `includeTracking=1` e o contato passa a trazer os 13 campos de atribuição (UTMs, gclid, fbclid, referrer, google_client_id, ttad) junto ao payload normal; `Only Tracked Info` reduz cada contato a `id`/`number`/`name` + grupo `tracking` e pula a busca de negócios. Versão bump para 0.5.2.
+
+**Contexto**
+
+A listagem `GET /api/contacts` nunca expôs os campos rastreados — eles existiam só para import/export/filtros. Relatórios de origem de lead no n8n precisavam de SQL direto.
+
+**Alternativas descartadas**
+
+Sempre incluir os campos no backend (13 colunas a mais por linha para a UI inteira). Resource novo só para tracking (duplica Search By/filtros; opção no mesmo node cobre o caso).
+
+**Impacto**
+
+Retrocompatível: backend antigo ignora o query param desconhecido e o node segue sem os campos. O backend correspondente está em `backend_crm1` (`includeTracking` opt-in em `GET /api/contacts`).
+
+---
+
 ### 2026-08-27 - Timeline do deal como action (não Trigger)
 
 **Decisão**
