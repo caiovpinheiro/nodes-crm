@@ -4,6 +4,26 @@ Este arquivo registra decisões estruturais tomadas ao longo do desenvolvimento 
 
 ---
 
+### 2026-10-02 - Informação rastreada no Create Deal With Contact
+
+**Decisão**
+
+As duas operações de `Deal + Contact` ganham a coleção opcional `Tracked Info` (UTM, click IDs e Meta/CTWA — os mesmos rótulos do painel). Campo vazio não entra no body. Não há resource novo de update: o mesmo `POST /api/leads` grava no contato na criação e, se o contato já existe, preenche o que veio. Versão 0.5.3. Exige backend com esses campos em `POST /api/leads`.
+
+**Contexto**
+
+O painel mostra informação rastreada no contato, mas o node só criava nome/telefone/negócio. Sem isso o fluxo n8n não conseguia nascer o lead já com utm/ctwa.
+
+**Alternativas descartadas**
+
+Node separado só de update. Obriga um segundo passo e um ID que o create já resolve. A coleção no create cobre deal novo e contato reaproveitado.
+
+**Impacto**
+
+Workflow antigo sem a coleção segue igual (`trackedInfo` default `{}`). Backend antigo ignora as chaves desconhecidas e o rastreio não grava — precisa do `POST /api/leads` correspondente.
+
+---
+
 ### 2026-09-16 - Search Full Record com informações rastreadas
 
 **Decisão**

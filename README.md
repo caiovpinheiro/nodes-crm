@@ -8,8 +8,8 @@ Node privado do n8n para operar o **Bwipo CRM** com campos amigáveis (sem monta
 - **Timeline**
   - `Get Events` — lê a timeline do negócio (a mesma do painel do deal) via `GET /api/deals/:id/timeline` e filtra pelo tipo (responsável alterado, mensagem recebida, automação, status, estágio, …). Padrão: só o evento mais recente daquele tipo. Use o `Deal ID` que veio do Trigger. **Requer** `backend-deal-timeline-bearer.patch` no CRM.
 - **Deal + Contact**
-  - `Create Deal With Contact` (prioridade) — acha o contato (ID → telefone → e-mail) ou cria, e cria o negócio já vinculado. Usa `POST /api/leads` (atômico e idempotente por telefone/e-mail).
-  - `Create Deal For Existing Contact` — cria (ou reaproveita) um negócio para um contato **que já existe**. Localiza por ID → telefone → e-mail e **não cria contato** se não achar. Também usa `POST /api/leads`.
+  - `Create Deal With Contact` (prioridade) — acha o contato (ID → telefone → e-mail) ou cria, e cria o negócio já vinculado. Usa `POST /api/leads` (atômico e idempotente por telefone/e-mail). A coleção **Tracked Info** grava a informação rastreada do contato (UTM, click IDs e Meta/CTWA). Cada campo é opcional; vazio não é enviado.
+  - `Create Deal For Existing Contact` — cria (ou reaproveita) um negócio para um contato **que já existe**. Localiza por ID → telefone → e-mail e **não cria contato** se não achar. Também usa `POST /api/leads` e aceita a mesma coleção **Tracked Info**.
 - **Contact**
   - `Search` — `GET /api/contacts` (termo, e-mail exato, telefone exato, lifecycle, **Ad Source ID Meta CTWA**). Toggle `Include Deals` enriquece cada contato com `deals: [...]` (chamada extra `GET /api/deals?contactId=...`).
   - `Create` — `POST /api/contacts`.

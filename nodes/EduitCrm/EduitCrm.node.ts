@@ -643,9 +643,12 @@ async function handleDealContact(
 		const deal = pruneEmpty({ stageId, title: dealTitle, ...dealExtra });
 		const dealCf = readCustomFields(this, 'dealCustomFieldsUi', i);
 		if (dealCf.length > 0) deal.customFields = dealCf;
+		const trackedInfo = pruneEmpty(
+			this.getNodeParameter('trackedInfo', i, {}) as IDataObject,
+		);
 
 		const body: IDataObject = {
-			contact: { id: contactId },
+			contact: { id: contactId, ...trackedInfo },
 			deal,
 			options: {
 				reuseOpenDeal: this.getNodeParameter('reuseOpenDeal', i, true) as boolean,
@@ -663,11 +666,15 @@ async function handleDealContact(
 	const contactPhone = this.getNodeParameter('contactPhone', i, '') as string;
 	const contactExtra = this.getNodeParameter('contactExtra', i, {}) as IDataObject;
 
+	const trackedInfo = pruneEmpty(
+		this.getNodeParameter('trackedInfo', i, {}) as IDataObject,
+	);
 	const contact = pruneEmpty({
 		name: contactName,
 		email: contactEmail,
 		phone: contactPhone,
 		...contactExtra,
+		...trackedInfo,
 	});
 
 	// Precisa de algo para localizar/criar: id, telefone, e-mail ou nome.

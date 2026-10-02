@@ -164,6 +164,61 @@ export const dealContactFields: INodeProperties[] = [
 		'Deal Custom Fields',
 	),
 
+	// ── Informação rastreada (contato) — todos opcionais ──
+	{
+		displayName: 'Tracked Info',
+		name: 'trackedInfo',
+		type: 'collection',
+		placeholder: 'Add Field',
+		default: {},
+		displayOptions: { show: SHOW_DEAL },
+		description:
+			'Informação rastreada do contato (o bloco do painel: UTM, click IDs e Meta/CTWA). Todos os campos são opcionais — só adicione o que tiver valor. Campo vazio não é enviado e não apaga o que já está no contato. Em Create Deal With Contact, com "Only Fill Empty Contact Fields" ligado, um valor novo só entra se aquele campo do contato ainda estiver em branco.',
+		options: [
+			{ displayName: 'utm_source', name: 'adUtmSource', type: 'string', default: '' },
+			{ displayName: 'utm_medium', name: 'adUtmMedium', type: 'string', default: '' },
+			{ displayName: 'utm_campaign', name: 'adUtmCampaign', type: 'string', default: '' },
+			{ displayName: 'utm_content', name: 'adUtmContent', type: 'string', default: '' },
+			{ displayName: 'utm_term', name: 'adUtmTerm', type: 'string', default: '' },
+			{ displayName: 'utm_id', name: 'utmId', type: 'string', default: '' },
+			{ displayName: 'utm_referrer', name: 'utmReferrer', type: 'string', default: '' },
+			{ displayName: 'referrer', name: 'referrer', type: 'string', default: '' },
+			{ displayName: 'gclientid', name: 'googleClientId', type: 'string', default: '' },
+			{ displayName: 'gclid', name: 'gclid', type: 'string', default: '' },
+			{ displayName: 'fbclid', name: 'fbclid', type: 'string', default: '' },
+			{ displayName: 'ttad_id', name: 'ttadId', type: 'string', default: '' },
+			{ displayName: 'ttad_name', name: 'ttadName', type: 'string', default: '' },
+			{
+				displayName: 'ctwa_clid',
+				name: 'adCtwaClid',
+				type: 'string',
+				default: '',
+				description: 'Click-to-WhatsApp (bloco Meta / CTWA)',
+			},
+			{
+				displayName: 'ad_headline',
+				name: 'adHeadline',
+				type: 'string',
+				default: '',
+				description: 'Título do anúncio (bloco Meta / CTWA)',
+			},
+			{
+				displayName: 'ad_id',
+				name: 'adResolvedId',
+				type: 'string',
+				default: '',
+				description: 'ID do anúncio no painel (bloco Meta / CTWA)',
+			},
+			{
+				displayName: 'ad_source_id',
+				name: 'adSourceId',
+				type: 'string',
+				default: '',
+				description: 'ID da fonte do anúncio Meta (referral.source_id)',
+			},
+		],
+	},
+
 	// ── Proteções contra reprocessamento ──
 	{
 		displayName: 'Avoid Duplicate Deal',
