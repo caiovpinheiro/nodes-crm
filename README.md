@@ -13,7 +13,7 @@ Node privado do n8n para operar o **Bwipo CRM** com campos amigáveis (sem monta
 - **Contact**
   - `Search` — `GET /api/contacts` (termo, e-mail exato, telefone exato, lifecycle, **Ad Source ID Meta CTWA**). Toggle `Include Deals` enriquece cada contato com `deals: [...]` (chamada extra `GET /api/deals?contactId=...`).
   - `Create` — `POST /api/contacts`.
-  - `Update` — `PUT /api/contacts/:id`.
+  - `Update` — `PUT /api/contacts/:id`. A coleção **Tracked Info** atualiza a informação rastreada (UTM, click IDs e Meta/CTWA). Campo preenchido substitui; vazio não é enviado e não apaga.
 - **Deal**
   - `Search` — `GET /api/deals` (pipeline, stage, status, dono, contato). Cada negócio inclui `customFields` **somente com valor preenchido** (`[{ fieldId, name, label, type, value }]`), via `GET /api/deals/:id/custom-fields`.
   - `Create` — `POST /api/deals`.

@@ -4,6 +4,26 @@ Este arquivo registra decisões estruturais tomadas ao longo do desenvolvimento 
 
 ---
 
+### 2026-10-02 - Informação rastreada no Contact Update
+
+**Decisão**
+
+`Contact > Update` ganha a mesma coleção `Tracked Info` do create deal. O valor preenchido vai no `PUT /api/contacts/:id` e substitui. Vazio não entra no body. Versão 0.5.4. Os 13 UTM/click IDs o PUT já aceitava; `ctwa_clid`, `ad_headline`, `ad_id` e `ad_source_id` passam a ser aceitos também, e string em branco não apaga.
+
+**Contexto**
+
+Quem já tem o contato e recebe o rastreio do Google Ads ou do Meta Ads depois não quer criar outro negócio só para gravar utm/gclid.
+
+**Alternativas descartadas**
+
+Node novo só de rastreio. O update de contato já existe e o operador já tem o ID.
+
+**Impacto**
+
+Workflow antigo sem a coleção segue igual. Sem o PUT novo no backend, os quatro campos Meta são ignorados; os 13 de UTM já gravavam.
+
+---
+
 ### 2026-10-02 - Informação rastreada no Create Deal With Contact
 
 **Decisão**

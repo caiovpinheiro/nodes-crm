@@ -274,7 +274,10 @@ async function handleContact(
 			throw new NodeOperationError(this.getNode(), 'Contact ID é obrigatório.', { itemIndex: i });
 		}
 		const updateFields = this.getNodeParameter('updateFields', i, {}) as IDataObject;
-		const body = pruneEmpty(updateFields);
+		const trackedInfo = pruneEmpty(
+			this.getNodeParameter('trackedInfo', i, {}) as IDataObject,
+		);
+		const body = { ...pruneEmpty(updateFields), ...trackedInfo };
 		const customFields = readCustomFields(this, 'customFieldsUi', i);
 
 		if (Object.keys(body).length === 0 && customFields.length === 0) {
