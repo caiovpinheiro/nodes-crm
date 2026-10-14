@@ -83,6 +83,52 @@ export async function getTags(this: ILoadOptionsFunctions): Promise<INodePropert
 	}));
 }
 
+type RawWhatsAppChannel = {
+	id: string;
+	name: string;
+	phoneNumber?: string | null;
+	provider?: string;
+	status?: string;
+};
+
+const WHATSAPP_PROVIDER_LABEL: Record<string, string> = {
+	META_CLOUD_API: 'API oficial',
+	BAILEYS_MD: 'QR',
+};
+
+const WHATSAPP_STATUS_LABEL: Record<string, string> = {
+	CONNECTED: 'conectado',
+	CONNECTING: 'conectando',
+	QR_READY: 'aguardando QR',
+	DISCONNECTED: 'desconectado',
+	FAILED: 'falha',
+};
+
+/**
+ * WhatsApps da organização (`GET /api/channels/whatsapp`). O value é o id
+ * do canal — o mesmo que o envio aceita em `channelId`.
+ */
+export async function getWhatsappChannels(
+	this: ILoadOptionsFunctions,
+): Promise<INodePropertyOptions[]> {
+	const response = (await eduitApiRequest.call(this, 'GET', '/api/channels/whatsapp')) as
+		| RawWhatsAppChannel[]
+		| { channels?: RawWhatsAppChannel[] };
+	const channels = Array.isArray(response) ? response : response.channels ?? [];
+	return channels
+		.filter((c) => typeof c.id === 'string' && c.id.trim() !== '' && typeof c.name === 'string')
+		.map((c) => {
+			const phone = c.phoneNumber?.trim();
+			const provider = c.provider ? WHATSAPP_PROVIDER_LABEL[c.provider] ?? c.provider : '';
+			const status = c.status ? WHATSAPP_STATUS_LABEL[c.status] ?? c.status : '';
+			return {
+				name: phone ? `${c.name} · ${phone}` : c.name,
+				value: c.id,
+				description: [provider, status].filter(Boolean).join(' · ') || undefined,
+			};
+		});
+}
+
 /** Carrega os pipelines da org (GET /api/pipelines retorna um array direto). */
 export async function getPipelines(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
 	const response = (await eduitApiRequest.call(this, 'GET', '/api/pipelines')) as

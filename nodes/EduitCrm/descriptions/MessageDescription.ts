@@ -49,6 +49,10 @@ export const messageOperations: INodeProperties[] = [
 ];
 
 const SHOW_ALL = { resource: ['message'] };
+const SHOW_WHATSAPP = {
+	resource: ['message'],
+	operation: ['sendText', 'sendTemplate', 'sendInteractive', 'sendList'],
+};
 const SHOW_CONTENT = { resource: ['message'], operation: ['sendNote', 'sendText'] };
 const SHOW_TEMPLATE = { resource: ['message'], operation: ['sendTemplate'] };
 const SHOW_INTERACTIVE = { resource: ['message'], operation: ['sendInteractive'] };
@@ -64,6 +68,16 @@ export const messageFields: INodeProperties[] = [
 		displayOptions: { show: SHOW_ALL },
 		description:
 			'ID do negócio. O CRM resolve o contato e a conversa de WhatsApp — reusando o atendimento em aberto ou abrindo um novo no canal padrão da organização.',
+	},
+	{
+		displayName: 'WhatsApp Channel Name or ID',
+		name: 'channelId',
+		type: 'options',
+		default: '',
+		typeOptions: { loadOptionsMethod: 'getWhatsappChannels' },
+		displayOptions: { show: SHOW_WHATSAPP },
+		description:
+			'WhatsApp da organização por onde a mensagem sai. A lista traz os canais conectados e os demais, com telefone e status. Vazio usa o canal da conversa (ou o padrão da organização, se ainda não houver conversa). Escolha na lista ou use uma expressão com o ID do canal.',
 	},
 
 	// ── Conteúdo (nota interna e texto) ──────────
@@ -434,14 +448,6 @@ export const messageFields: INodeProperties[] = [
 		placeholder: 'Adicionar opção',
 		displayOptions: { show: SHOW_ALL },
 		options: [
-			{
-				displayName: 'Channel ID',
-				name: 'channelId',
-				type: 'string',
-				default: '',
-				description:
-					'Envia por um WhatsApp específico quando a organização tem mais de um conectado. Vazio usa o canal da conversa.',
-			},
 			{
 				displayName: 'Flow Token',
 				name: 'flowToken',

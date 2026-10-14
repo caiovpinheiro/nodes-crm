@@ -22,6 +22,7 @@ import {
 	getQuickReplies,
 	getStages,
 	getTags,
+	getWhatsappChannels,
 	getWhatsappFlows,
 	getWhatsappTemplates,
 	getWhatsappTemplateVariables,
@@ -139,6 +140,9 @@ export class EduitCrm implements INodeType {
 				this: ILoadOptionsFunctions,
 			): Promise<INodePropertyOptions[]> {
 				return getInternalContentVariables.call(this);
+			},
+			getWhatsappChannels(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
+				return getWhatsappChannels.call(this);
 			},
 			getWhatsappFlows(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
 				return getWhatsappFlows.call(this);
@@ -736,6 +740,21 @@ async function handleDealContact(
  * Variáveis de template vão como `[{ component, key, value }]`; quem monta o
  * `components` da Cloud API é o backend. Nenhum JSON da Meta é escrito aqui.
  */
+/**
+ * Canal escolhido no dropdown. Workflows antigos guardavam o id em
+ * `messageOptions.channelId` (texto livre) — esse valor continua valendo
+ * quando o campo novo está vazio.
+ */
+function readOutboundChannelId(
+	ctx: IExecuteFunctions,
+	itemIndex: number,
+	options: IDataObject,
+): string {
+	const picked = String(ctx.getNodeParameter('channelId', itemIndex, '') ?? '').trim();
+	if (picked) return picked;
+	return typeof options.channelId === 'string' ? options.channelId.trim() : '';
+}
+
 async function handleMessage(
 	this: IExecuteFunctions,
 	operation: string,
@@ -781,7 +800,8 @@ async function handleMessage(
 		// Nota interna não passa por canal nem interrompe automações — enviar
 		// esses campos só confundiria o log de acesso da API.
 		if (operation === 'sendText') {
-			if (options.channelId) body.channelId = String(options.channelId).trim();
+			const channelId = readOutboundChannelId(this, i, options);
+			if (channelId) body.channelId = channelId;
 			if (options.keepAutomations === true) body.stopAutomations = false;
 		}
 		return (await eduitApiRequest.call(this, 'POST', endpoint, body)) as IDataObject;
@@ -840,7 +860,8 @@ async function handleMessage(
 		};
 		if (header) requestBody.header = header;
 		if (footer) requestBody.footer = footer;
-		if (options.channelId) requestBody.channelId = String(options.channelId).trim();
+		const interactiveChannelId = readOutboundChannelId(this, i, options);
+		if (interactiveChannelId) requestBody.channelId = interactiveChannelId;
 		if (options.keepAutomations === true) requestBody.stopAutomations = false;
 
 		return (await eduitApiRequest.call(this, 'POST', endpoint, requestBody)) as IDataObject;
@@ -909,7 +930,8 @@ async function handleMessage(
 		if (sectionTitle) requestBody.sectionTitle = sectionTitle;
 		if (header) requestBody.header = header;
 		if (footer) requestBody.footer = footer;
-		if (options.channelId) requestBody.channelId = String(options.channelId).trim();
+		const listChannelId = readOutboundChannelId(this, i, options);
+		if (listChannelId) requestBody.channelId = listChannelId;
 		if (options.keepAutomations === true) requestBody.stopAutomations = false;
 
 		return (await eduitApiRequest.call(this, 'POST', endpoint, requestBody)) as IDataObject;
@@ -937,6 +959,9 @@ async function handleMessage(
 			const flowActionData = readKeyValuePairs(this, 'flowActionDataUi', i);
 			if (Object.keys(flowActionData).length > 0) body.flowActionData = flowActionData;
 		}
+
+		const templateChannelId = readOutboundChannelId(this, i, options);
+		if (templateChannelId) body.channelId = templateChannelId;
 
 		return (await eduitApiRequest.call(this, 'POST', endpoint, body)) as IDataObject;
 	}
